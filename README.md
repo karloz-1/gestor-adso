@@ -1,59 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Gestor ADSO
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Proyecto integrador con **PHP y Laravel** para el programa ADSO (SENA Regional Antioquia · CTMA), desarrollado con Aprendizaje Basado en Proyectos (ABP). Este README documenta la **Semana 1: instalación y primer arranque**.
 
-## About Laravel
+- **Autor:** Carlos Gonzalez
+- **Ficha:** 3412768
+- **Instructor:** Gustavo Bolaños
+- **Sistema operativo:** Ubuntu (GNU/Linux)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 1. Herramientas y versiones reales
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+> Versiones obtenidas ejecutando cada comando en mi equipo.
 
-## Learning Laravel
+| Herramienta | Comando | Versión registrada |
+|---|---|---|
+| PHP | `php -v` | 8.2.12 
+| Composer | `composer -V` | 2.10.3
+| Laravel | `php artisan --version` | 12.69.3
+| MariaDB | `mariadb --version` | 10.4.32
+| Git | `git --version` | 2.53.0
+| VS Code | `code --version` | 1.141.0
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+Ruta de PHP (`which php`): 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 2. Instalación del entorno
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+En Konsole:
 
-### Premium Partners
+```bash
+sudo apt update
+sudo apt install -y php-cli php-mbstring php-xml php-curl php-zip php-mysql mariadb-server composer git unzip
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **PHP:** verificar con `which php` y `php -v`.
+2. **Extensiones:** Laravel necesita `openssl`, `PDO`, `pdo_mysql`, `mbstring`, `fileinfo` y `zip`. No se edita `php.ini` a mano; con `php --ini` se ve qué archivos carga PHP y con `php -m` se confirma que las extensiones estén cargadas.
+3. **MariaDB:** iniciar el servicio y verificar que corre.
 
-## Contributing
+   ```bash
+   sudo systemctl enable --now mariadb
+   systemctl status mariadb
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Composer:** verificar con `composer -V`.
+5. **Git:** verificar con `git --version` y configurar la identidad:
 
-## Code of Conduct
+   ```bash
+   git config --global user.name "<TU NOMBRE>"
+   git config --global user.email "<TU CORREO>"
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **VS Code:** instalar desde <https://code.visualstudio.com> (paquete `.deb`) o con `sudo snap install code --classic`. Verificar con `code --version`.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 3. Proyecto Laravel y `.env`
 
-## License
+```bash
+mkdir -p ~/proyectos && cd ~/proyectos
+composer create-project laravel/laravel gestor-adso
+cd gestor-adso
+php artisan --version
+cp .env.example .env
+php artisan key:generate
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Configuración de base de datos en `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=gestor_adso
+DB_USERNAME=adso
+DB_PASSWORD=
+```
+
+---
+
+## 4. Base de datos y migraciones
+
+Crear la base de datos y el usuario (la contraseña debe coincidir con `DB_PASSWORD`):
+
+```bash
+sudo mariadb -e "CREATE DATABASE gestor_adso CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'adso'@'localhost' IDENTIFIED BY '<CONTRASEÑA>';
+GRANT ALL PRIVILEGES ON gestor_adso.* TO 'adso'@'localhost';
+FLUSH PRIVILEGES;"
+```
+
+Luego, dentro del proyecto:
+
+```bash
+php artisan config:clear
+php artisan migrate
+```
+
+---
+
+## 5. Ejecutar el servidor
+
+```bash
+php artisan serve
+```
+
+Abrir la dirección que muestre la terminal (normalmente <http://127.0.0.1:8000>); debe verse la pantalla de bienvenida de Laravel.
+
+---
+
+## 6. Control de versiones
+
+```bash
+git init
+git add .
+git commit -m "Semana 1: Entorno listo + Laravel base"
+```
+
+---
+
+## 7. Evidencias del proceso
+
+| # | Qué se hizo | Comando / acción | Resultado obtenido |
+|---|---|---|---|
+| 1 | Instalar PHP, MariaDB, Composer y Git con apt | `sudo apt install ...` | <DESCRIBIR> |
+| 2 | Verificar PHP y extensiones | `which php` · `php -v` · `php -m` | <RUTA, VERSIÓN Y EXTENSIONES REALES> |
+| 3 | Iniciar MariaDB | `sudo systemctl enable --now mariadb` | <DESCRIBIR> |
+| 4 | Verificar Composer, Git y VS Code | `composer -V` · `git --version` · `code --version` | <VERSIONES REALES> |
+| 5 | Crear el proyecto Laravel | `composer create-project laravel/laravel gestor-adso` | <VERSIÓN REAL DE LARAVEL> |
+| 6 | Configurar `.env` y crear BD y usuario | `php artisan key:generate` · `sudo mariadb -e "CREATE DATABASE ..."` | <DESCRIBIR> |
+| 7 | Ejecutar migraciones | `php artisan migrate` | <DESCRIBIR> |
+| 8 | Levantar el servidor | `php artisan serve` | <DIRECCIÓN REAL Y QUÉ SE VIO> |
+| 9 | Primer commit | `git add .` · `git commit` | <DESCRIBIR> |
+
+El proceso es reproducible: cualquier persona con Kubuntu puede seguir estos pasos con el mismo resultado, verificando cada herramienta antes de avanzar.
