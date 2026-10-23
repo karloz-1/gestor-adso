@@ -1,36 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
-    <meta charset="utf-8">
-    <title>@yield('title','Gestor ADSO')</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        body {
-            max-width: 980px;
-            margin: 24px auto;
-            font-family: system-ui
-        }
+    <meta charset="UTF-8">
 
-        nav a {
-            margin-right: 12px
-        }
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-        .flash {
-            background: #e6ffed;
-            padding: 8px;
-            border-radius: 8px;
-            margin-bottom: 10px
-        }
-    </style>
+    <title>Gestor ADSO</title>
 </head>
 
 <body>
+
     <nav>
-        <a href="/aprendices">Aprendices</a>
+        <a href="{{ route('aprendices.index') }}">
+            Aprendices
+        </a>
     </nav>
-    @if(session('ok'))<div class="flash">{{ session('ok') }}</div>@endif
+
+    <hr>
+
     @yield('content')
+
 </body>
 
 </html>
